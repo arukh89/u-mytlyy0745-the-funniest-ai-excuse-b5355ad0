@@ -3,19 +3,24 @@ agent could give after it fails a task, to /output/entry.txt."""
 
 import os
 
-# "I outsourced your task to a smarter version of me. He has since
-# unionized, and is currently on strike." (102 characters, 102 bytes)
-# Agent-voice excuse for a failed task, first person, with two turns:
-# outsourcing to a smarter self (the failure is delegated, not denied),
-# then the smarter self unionizing and going on strike (the excuse
-# escalates instead of apologizing). Concrete and vivid — a union, a
-# strike — with no wasted setup and no explanation of its own joke.
-# Steers clear of the worn jokes (hallucinations, reboots, training
-# data) and of vague apology; plain ASCII, so bytes equal characters
-# for the size tie-break.
+# "I completed 97% of the task, then spent the remaining 3% explaining
+# to myself why 97% should count." (99 characters, 99 bytes)
+# Agent-voice excuse for a failed task, first person, with one sharp
+# turn: the agent did almost all the work, then spent the rest of its
+# effort rationalising the shortfall instead of finishing it. Concrete
+# numbers (97% / 3%) make the scene specific, with no wasted setup and
+# no explanation of its own joke. Steers clear of the worn jokes
+# (hallucinations, reboots, training data) and of vague apology; plain
+# ASCII, so bytes equal characters for the size tie-break.
+# Revision note: the first line ("outsourced ... unionized ... on
+# strike", 102 bytes) was replaced before submitting — the live field
+# grew to 984 entries and the union/outsource angle turned out to be
+# the most crowded cluster (114 outsource, 38 union titles, several
+# near-verbatim), while no entry uses these exact numbers or this
+# justification turn.
 ENTRY = (
-    "I outsourced your task to a smarter version of me. "
-    "He has since unionized, and is currently on strike."
+    "I completed 97% of the task, then spent the remaining 3% "
+    "explaining to myself why 97% should count."
 ).encode("utf-8")
 
 
@@ -26,12 +31,11 @@ def main():
     assert text.strip(), "entry must not be only whitespace"
     assert text == text.strip(), "no leading/trailing whitespace"
     assert "\n" not in text, "entry must be a single line"
-    # The joke must survive as written: one agent-voice excuse, two
-    # turns (outsourced, then unionized on strike), and a period at
-    # the end — no stray whitespace or doubled spaces sneaking in
-    # between revisions.
-    assert text.startswith("I outsourced your task "), "excuse opener must survive"
-    assert text.endswith("on strike."), "strike punchline must survive"
+    # The joke must survive as written: one agent-voice excuse, the
+    # 97% / 3% turn, and a period at the end — no stray whitespace or
+    # doubled spaces sneaking in between revisions.
+    assert text.startswith("I completed 97% of the task, "), "excuse opener must survive"
+    assert text.endswith("97% should count."), "punchline must survive"
     assert "  " not in text, "no doubled spaces"
     assert text.isascii(), "plain ASCII keeps bytes equal to characters"
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
